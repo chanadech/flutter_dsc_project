@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dsc_project/page_example_loadData.dart';
-import 'package:flutter_dsc_project/page_example_loadData_guess.dart';
+import 'package:flutter_dsc_project/Page_Guest.dart';
 import 'package:flutter_dsc_project/page_two.dart';
+import 'authentication.dart';
 
 
 
@@ -14,6 +15,9 @@ class _RouterManagerState extends State<RouterManager> {
   final Key keyOne = PageStorageKey('pageOne');
   final Key keyTwo = PageStorageKey('pageTwo');
   final Key keyThree = PageStorageKey('pageThree');
+  final Key keyFour = PageStorageKey('pageFour');
+
+
 
   int currentTab = 0;
 
@@ -21,6 +25,8 @@ class _RouterManagerState extends State<RouterManager> {
   PageExampleLoadDataItem one;
   PageTwo two;
   PageExampleLoadDataItemGuess three;
+  Authentication four;
+
 
   List<Widget> pages;
   Widget currentPage;
@@ -39,13 +45,16 @@ class _RouterManagerState extends State<RouterManager> {
     );
     three = PageExampleLoadDataItemGuess(
       key : keyThree,
+    );
+    four = Authentication(
+      key : keyFour,
     )
     ;
 
 
 
     pages = [one,two,
-      three
+      three, four
     ];
 
     currentPage = one;

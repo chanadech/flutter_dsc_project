@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dsc_project/router_page.dart';
 
+import 'main.dart';
+
 class PageTwo extends StatefulWidget {
   final List<Data> dataList;
   PageTwo({
@@ -16,9 +18,9 @@ class PageTwoState extends State<PageTwo> {
 
   void _logout() {
     //implement function here
-    Navigator.pop(
+    Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RouterManager()),
+      MaterialPageRoute(builder: (context) => MyHomePage()),
     );
 
   }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/box.dart';
+import 'package:flutter_dsc_project/authentication_guest.dart';
 import 'package:flutter_dsc_project/page_example_loadData.dart';
 import 'package:flutter_dsc_project/router_page.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,7 @@ class PageExampleLoadDataItemGuessState extends State<PageExampleLoadDataItemGue
 
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PageExampleLoadDataItem()),
+      MaterialPageRoute(builder: (context) => AuthenticationGuest()),
     );
     print("Holyshit2");
 
