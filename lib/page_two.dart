@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dsc_project/router_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'main.dart';
 
@@ -16,8 +17,9 @@ class PageTwo extends StatefulWidget {
 
 class PageTwoState extends State<PageTwo> {
 
-  void _logout() {
+  void _logout() async {
     //implement function here
+    await FirebaseAuth.instance.signOut();
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MyHomePage()),
@@ -50,7 +52,7 @@ class PageTwoState extends State<PageTwo> {
             SizedBox(
               height: 20.0,
             ),
-            Text("Chanadech",
+            Text(username,
               style:TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black
@@ -59,7 +61,7 @@ class PageTwoState extends State<PageTwo> {
             SizedBox(
               height: 10.0,
             ),
-            Text("dachboy@hotmail.com",
+            Text(user.email,
               style: TextStyle(
                   color: Colors.grey
               ),

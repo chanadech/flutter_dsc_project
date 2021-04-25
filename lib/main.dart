@@ -8,12 +8,14 @@ import 'package:progress_state_button/progress_button.dart';
 import 'router_page.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'model/modelMock.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 User user;
+String mfa;
+String username;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -204,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             //fillColor: Colors.green
                           ),
                           validator: (val) {
-                            if (_emailField.text.length == 0) {
+                            if (val.length == 0) {
                               return "Email cannot be empty";
                             } else {
                               return null;
@@ -242,7 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             //fillColor: Colors.green
                           ),
                           validator: (val) {
-                            if (_passwordField.text.length == 0) {
+                            if (val.length == 0) {
                               return "Password cannot be empty";
                             } else {
                               return null;
@@ -315,21 +317,33 @@ class _MyHomePageState extends State<MyHomePage> {
             password: _passwordField.text,
           )).user;
           if (user != null) {
-            print("login success");
-            print(user.email);
-            Navigator.push( //// DECHI : Fix so that the state actuallty
+            print("login success: proceed to 2fa");
+
+            await FirebaseFirestore.instance //Collecting personal stuff
+                .collection('user')
+                .where('email', isEqualTo: user.email)
+                .get()
+                .then((QuerySnapshot querySnapshot) {
+              querySnapshot.docs.forEach((doc) {
+                //print(doc["mfa"]);
+                mfa = doc["mfa"];
+                username = doc["name"];
+              });
+            });
+
+            Navigator.push( //// DECHI : Fix so that the state actually works
               context,
               MaterialPageRoute(builder: (context) => Authentication()),
             );
             setState(() => ButtonState.success );
             break;
           } else {
-            print("login fail");
+            print("login fail: mismatched input");
             setState(() => ButtonState.fail );
             break;
           }
         } catch (e) {
-          print(e);
+          print("login error: " + e);
         }
         setState(() => ButtonState.fail );
         break;
