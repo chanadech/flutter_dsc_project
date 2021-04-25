@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:animated_widgets/animated_widgets.dart';
 import 'package:flutter_dsc_project/page_example_loadData.dart';
 import 'package:flutter_dsc_project/router_page.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'main.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class Authentication extends StatefulWidget {
 
@@ -25,6 +27,7 @@ class AuthenticationState extends State<Authentication> {
   bool loaded;
   bool shake;
   bool valid;
+  String mfa;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _textNode = FocusNode();
 
@@ -43,16 +46,40 @@ class AuthenticationState extends State<Authentication> {
     });
   }
 
-  void _loginAdmin() {
+  Future<void> _loginAdmin() async {
     //implement function here
-    print("zaza");
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RouterManager()),
-    );
+    await FirebaseFirestore.instance
+        .collection('user')
+        .where('email', isEqualTo: user.email)
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        print(doc["mfa"]);
+        mfa = doc["mfa"];
+      });
+    });
+    if (mfa == code) {
+      print("SUCESS");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RouterManager()),
+      );
+    }
+    else {
+      print("FAILED");
+      setState(() {
+        shake = true;
+      });
+      await Future<String>.delayed(
+          const Duration(milliseconds: 300), () => '1');
+      setState(() {
+        shake = false;
+      });
+    }
   }
 
-  Future<void> verifyMfaAndNext() async {
+
+    Future<void> verifyMfaAndNext() async {
     setState(() {
       loaded = false;
 
