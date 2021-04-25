@@ -304,26 +304,48 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void onPressedLoginAdminButton() async {//back implement here
+  Future<void> onPressedLoginAdminButton() async {//back implement here
     switch (stateTextWithIcon) {
       case ButtonState.idle:
         stateTextWithIcon = ButtonState.loading;
-        Future.delayed(Duration(seconds: 1), () async {
             try {
-              await FirebaseAuth.instance
-                  .signInWithEmailAndPassword(email: _emailField.text, password: _passwordField.text);
-              setState(() => ButtonState.success );
+              final User user = (await _auth.signInWithEmailAndPassword(
+                email: _emailField.text,
+                password: _passwordField.text,
+              )).user;
+              if (user != null) {
+                print("login success");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Authentication()),
+                );
+                setState(() => ButtonState.success );
+                break;
+              } else {
+                print("login fail");
+                setState(() => ButtonState.fail );
+                break;
+              }
             } catch (e) {
               print(e);
-              setState(() => ButtonState.fail );
             }
+            setState(() => ButtonState.fail );
+            break;
+
+            //try {
+            //  await FirebaseAuth.instance
+            //      .signInWithEmailAndPassword(email: _emailField.text, password: _passwordField.text);
+            //  setState(() => ButtonState.success );
+            //} catch (e) {
+            //  print(e);
+            //  setState(() => ButtonState.fail );
+            //}
+
             //setState(() {
             //stateTextWithIcon = Random.secure().nextBool()
             //    ? ButtonState.success
             //    : ButtonState.fail;
             //});
-        });
-        break;
       case ButtonState.loading:
         break;
       case ButtonState.success:
