@@ -13,6 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+User user;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -308,44 +309,31 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (stateTextWithIcon) {
       case ButtonState.idle:
         stateTextWithIcon = ButtonState.loading;
-            try {
-              final User user = (await _auth.signInWithEmailAndPassword(
-                email: _emailField.text,
-                password: _passwordField.text,
-              )).user;
-              if (user != null) {
-                print("login success");
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => Authentication()),
-                );
-                setState(() => ButtonState.success );
-                break;
-              } else {
-                print("login fail");
-                setState(() => ButtonState.fail );
-                break;
-              }
-            } catch (e) {
-              print(e);
-            }
+        try {
+          user = (await _auth.signInWithEmailAndPassword(
+            email: _emailField.text,
+            password: _passwordField.text,
+          )).user;
+          if (user != null) {
+            print("login success");
+            print(user.email);
+            Navigator.push( //// DECHI : Fix so that the state actuallty
+              context,
+              MaterialPageRoute(builder: (context) => Authentication()),
+            );
+            setState(() => ButtonState.success );
+            break;
+          } else {
+            print("login fail");
             setState(() => ButtonState.fail );
             break;
+          }
+        } catch (e) {
+          print(e);
+        }
+        setState(() => ButtonState.fail );
+        break;
 
-            //try {
-            //  await FirebaseAuth.instance
-            //      .signInWithEmailAndPassword(email: _emailField.text, password: _passwordField.text);
-            //  setState(() => ButtonState.success );
-            //} catch (e) {
-            //  print(e);
-            //  setState(() => ButtonState.fail );
-            //}
-
-            //setState(() {
-            //stateTextWithIcon = Random.secure().nextBool()
-            //    ? ButtonState.success
-            //    : ButtonState.fail;
-            //});
       case ButtonState.loading:
         break;
       case ButtonState.success:
