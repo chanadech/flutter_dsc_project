@@ -137,14 +137,16 @@ class AuthenticationState extends State<Authentication> {
           physics: const NeverScrollableScrollPhysics(),
           child: Column(
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(60),
-                child: Text(
-                  'Verify your phone',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 38,
-                    fontWeight: FontWeight.w700,
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(60),
+                  child: Text(
+                    'Verify your phone',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 38,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
