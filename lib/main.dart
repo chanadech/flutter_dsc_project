@@ -9,9 +9,14 @@ import 'router_page.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'model/modelMock.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -42,6 +47,9 @@ class _MyHomePageState extends State<MyHomePage> {
   ButtonState stateOnlyText = ButtonState.idle;
   ButtonState stateTextWithIcon = ButtonState.idle;
   ButtonState stateTextWithIconMinWidthState = ButtonState.idle;
+
+  final TextEditingController _emailField = TextEditingController();
+  final TextEditingController _passwordField = TextEditingController();
 
   void _loginGuest() {
     //implement function here
@@ -184,8 +192,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.blueAccent,
                         ),
                         title: new TextFormField(
-                          decoration: new InputDecoration(
-                            labelText: "Enter Username",
+                            controller: _emailField,
+                            decoration: new InputDecoration(
+                            labelText: "Enter Email",
                             fillColor: Colors.transparent,
                             border: new OutlineInputBorder(
                               borderRadius: new BorderRadius.circular(25.0),
@@ -194,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             //fillColor: Colors.green
                           ),
                           validator: (val) {
-                            if (val.length == 0) {
+                            if (_emailField.text.length == 0) {
                               return "Email cannot be empty";
                             } else {
                               return null;
@@ -221,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         title: new TextFormField(
                           obscureText: true,
+                          controller: _passwordField,
                           decoration: new InputDecoration(
                             labelText: "Enter Password",
                             fillColor: Colors.transparent,
@@ -231,8 +241,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             //fillColor: Colors.green
                           ),
                           validator: (val) {
-                            if (val.length == 0) {
-                              return "Email cannot be empty";
+                            if (_passwordField.text.length == 0) {
+                              return "Password cannot be empty";
                             } else {
                               return null;
                             }
@@ -294,18 +304,25 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void onPressedLoginAdminButton() {  //back implement here
+  void onPressedLoginAdminButton() async {//back implement here
     switch (stateTextWithIcon) {
       case ButtonState.idle:
         stateTextWithIcon = ButtonState.loading;
-        Future.delayed(Duration(seconds: 1), () {
-          setState(() {
-            stateTextWithIcon = Random.secure().nextBool()
-                ? ButtonState.success
-                : ButtonState.fail;
-          });
+        Future.delayed(Duration(seconds: 1), () async {
+            try {
+              await FirebaseAuth.instance
+                  .signInWithEmailAndPassword(email: _emailField.text, password: _passwordField.text);
+              setState(() => ButtonState.success );
+            } catch (e) {
+              print(e);
+              setState(() => ButtonState.fail );
+            }
+            //setState(() {
+            //stateTextWithIcon = Random.secure().nextBool()
+            //    ? ButtonState.success
+            //    : ButtonState.fail;
+            //});
         });
-
         break;
       case ButtonState.loading:
         break;
@@ -327,4 +344,3 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 }
-
