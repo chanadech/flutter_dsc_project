@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,6 @@ class PageExampleLoadDataItemGuess extends StatefulWidget {
 
 class PageExampleLoadDataItemGuessState
     extends State<PageExampleLoadDataItemGuess> {
-  // List<String> items = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH"];
   List<Ownerlist> _transactions = [];
 
   @override
@@ -53,13 +53,12 @@ class PageExampleLoadDataItemGuessState
   //   );
   // }
 
-  Future<List> _getdata() async {
-    await FirebaseFirestore.instance //Collecting personal stuff
-        .collection('user')
-        .get()
+ _getdata() {
+   final List<Ownerlist> transaction = [];
+    FirebaseFirestore.instance //Collecting personal stuff
+        .collection('user').get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-        final List<Ownerlist> transaction = [];
         // loop key value ทื่ได้มาแล้วค่อยไปใส่ใน transaction หรือ ใน list ของ object ของเรา ให้ถูกต้อง
         // print("ProductData: $prodData");
 
