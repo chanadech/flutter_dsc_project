@@ -33,6 +33,7 @@ dependencies:
   google_fonts: ^2.0.0
   progress_state_button: "^1.0.3"
   animated_widgets: ^1.0.6
+  url_launcher: ^6.0.3
 
 dev_dependencies:
   flutter_test:

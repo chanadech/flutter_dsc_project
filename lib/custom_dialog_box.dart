@@ -84,7 +84,6 @@ class CustomDialogBox extends StatelessWidget {
                                 ],
                               ),
                               onPressed:() async {
-                                //// DECHI
                                 studentID = user.email.substring(0,7);
                                 print(studentID);
                               })

@@ -47,6 +47,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+
   ButtonState stateOnlyText = ButtonState.idle;
   ButtonState stateTextWithIcon = ButtonState.idle;
   ButtonState stateTextWithIconMinWidthState = ButtonState.idle;
@@ -61,60 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(builder: (context) => PageExampleLoadDataItemGuess()),
     );
   }
-
-
-
-  void _login() {
-    //implement function here
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => RouterManager()),
-    );
-    // http
-    //     .get('https://labflutter-3b9e2.firebaseio.com/user.json')
-    //     .then((value) {
-    //       // print("##object");
-    //       print(value.body);
-    //       });
-
-    // _getdata();
-  }
-
-  /*
-  void _getdata() {
-    http
-        .get(
-      //get ไปเอาข้อมูลที่เดิม แต่ส่งแบบ get แทน
-      Uri.parse(
-          "https://labtest-68c7d-default-rtdb.firebaseio.com/teamsoft.json"), //return Futre <Response> --> เอา data จาก future ใข้ .then
-    )
-        .then((response) {
-      print(response.body); // ไดข้อมูลมาแล้วว จาก console ด้านล่าง
-      final extractedData = json.decode(response.body) as Map<String,
-          dynamic>; //parse data จาก firebase ไปใส่ใน list  ของ object ก๊อปไปได้เลย ใช้ http get นะ
-      final List<ModelMock> transaction = [];
-      extractedData.forEach((prodId, prodData) {
-        // loop key value ทื่ได้มาแล้วค่อยไปใส่ใน transaction หรือ ใน list ของ object ของเรา ให้ถูกต้อง
-        // print("ProductData: $prodData");
-        transaction.add(ModelMock(
-          // ปรับแค่ตอนสร้าง object
-            description: prodData['description'],
-            title: prodData['title'],
-            date: DateTime.now(),
-            id: prodData['id']));
-
-        setState(() {
-          this._transactions = transaction;
-        });
-      });
-      print(transaction);
-    });
-  }
-
-
-*/
-
-
 
 
 
@@ -154,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 CircleAvatar(
                   radius: 50.0,
                   backgroundImage:
-                      NetworkImage("https://img.icons8.com/ios/452/school.png"),
+                  NetworkImage("https://img.icons8.com/ios/452/school.png"),
                   backgroundColor: Colors.transparent,
                 ),
                 Text(
@@ -185,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Card(
                   color: Colors.white,
                   margin:
-                      EdgeInsets.symmetric(vertical: 10.00, horizontal: 20.00),
+                  EdgeInsets.symmetric(vertical: 10.00, horizontal: 20.00),
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
@@ -222,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Card(
                   color: Colors.white,
                   margin:
-                      EdgeInsets.symmetric(vertical: 10.00, horizontal: 20.00),
+                  EdgeInsets.symmetric(vertical: 10.00, horizontal: 20.00),
                   child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
@@ -311,6 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (stateTextWithIcon) {
       case ButtonState.idle:
         stateTextWithIcon = ButtonState.loading;
+
         try {
           user = (await _auth.signInWithEmailAndPassword(
             email: _emailField.text,
@@ -333,20 +282,29 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 MaterialPageRoute(builder: (context) => Authentication()),
             );
-            setState(() => ButtonState.success );
+            setState(() {
+              return  ButtonState.success; }
+            );
             break;
           } else {
             print("login fail: mismatched input");
-            setState(() => ButtonState.fail );
+            setState(() {
+              return  ButtonState.fail; }
+            );
             break;
           }
         } catch (e) {
           print("login error: " + e);
+          setState(() => ButtonState.fail );
+
         }
         setState(() => ButtonState.fail );
         break;
 
       case ButtonState.loading:
+        setState(() {
+          return ButtonState.idle;
+        });
         break;
       case ButtonState.success:
         stateTextWithIcon = ButtonState.idle;

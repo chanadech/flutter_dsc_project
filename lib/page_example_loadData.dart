@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/rendering/box.dart';
 import 'package:http/http.dart' as http;
 import 'custom_dialog_box.dart';
-import 'model/modelMock.dart';
+import 'model/Filelist.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'main.dart';
 
 class PageExampleLoadDataItem extends StatefulWidget {
   final List<Data> dataList;
@@ -20,16 +23,13 @@ class PageExampleLoadDataItem extends StatefulWidget {
 }
 
 class PageExampleLoadDataItemState extends State<PageExampleLoadDataItem> {
-  // List<String> items = ["AA", "BB", "CC", "DD", "EE", "FF", "GG", "HH"];
-  List<ModelMock> _transactions = [];                                           ////Edit Adap model class which should be our data
-  var isOwner ;
-
+  List<Filelist> _transactions = []; ////Edit Adap model class which should be our data
+  var isOwner;
 
   @override
   void initState() {
-    _transactions = _getdata();                                                 // receive data from api when start app
+    _transactions = _getdata(); // receive data from api when start app
     super.initState();
-
   }
 
   // void _detailPage() {
@@ -39,54 +39,53 @@ class PageExampleLoadDataItemState extends State<PageExampleLoadDataItem> {
   //   );
   // }
 
-  List _getdata() {                                                             // get data from api
-    http
-        .get(
-      //get ไปเอาข้อมูลที่เดิม แต่ส่งแบบ get แทน
-      Uri.parse(
-          "https://labtest-68c7d-default-rtdb.firebaseio.com/teamsoft.json"), //return Futre <Response> --> เอา data จาก future ใข้ .then
-    )
-        .then((response) {
-      print(response.body); // ไดข้อมูลมาแล้วว จาก console ด้านล่าง
-      final extractedData = json.decode(response.body) as Map<String,
-          dynamic>; //parse data จาก firebase ไปใส่ใน list  ของ object ก๊อปไปได้เลย ใช้ http get นะ
-      final List<ModelMock> transaction = [];
-      extractedData.forEach((prodId, prodData) {
+  _getdata() {
+    final List<Filelist> transaction = [];
+    FirebaseFirestore.instance //Collecting personal stuff
+        .collection('user')
+        .where('email', isEqualTo: user.email).get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
         // loop key value ทื่ได้มาแล้วค่อยไปใส่ใน transaction หรือ ใน list ของ object ของเรา ให้ถูกต้อง
         // print("ProductData: $prodData");
-        transaction.add(ModelMock(
-            // ปรับแค่ตอนสร้าง object
-            description: prodData['description'],
-            title: prodData['title'],
-            date: DateTime.now(),
-            id: prodData['id']));
 
+        transaction.add(Filelist(
+          // ปรับแค่ตอนสร้าง object
+            name: doc["fname"],
+            link: doc["flink"]));
+        setState(() {
+          this._transactions = transaction;
+        });
+        transaction.add(Filelist(
+          // ปรับแค่ตอนสร้าง object
+            name: doc["fname2"],
+            link: doc["flink2"]));
         setState(() {
           this._transactions = transaction;
         });
       });
-      print(transaction);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    isOwner = true;                                //// Edit State when login checking user type that true or false
+    isOwner =
+        true; //// Edit State when login checking user type that true or false
 
-    return
-      SafeArea(
+    return SafeArea(
       child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Visibility(       //// Implement here- Edit State when login checking user type that true or false
-            child: FloatingActionButton(
-              child: Icon(Icons.add),
-                onPressed:(){
-                  showCustomDialogBox(context);
-                },
-            ),
-            visible: isOwner,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Visibility(
+          //// Implement here- Edit State when login checking user type that true or false
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              showCustomDialogBox(context);
+            },
           ),
-         body: SingleChildScrollView(
+          visible: isOwner,
+        ),
+        body: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: <Widget>[
@@ -103,15 +102,21 @@ class PageExampleLoadDataItemState extends State<PageExampleLoadDataItem> {
                                             color: Colors.blueGrey))),
                                 child: CircleAvatar(
                                   backgroundImage: NetworkImage(
-                                      "https://www.pngfind.com/pngs/m/470-4703547_icon-user-icon-hd-png-download.png"),
+                                      "https://www.iconpacks.net/icons/2/free-pdf-download-icon-3388-thumb.png"),
                                 ),
                               ),
                               contentPadding: const EdgeInsets.all(16.0),
-                              title: Text(entry.description),
-                              subtitle: Text(entry.title.toString()),
+                              title: Text(entry.name),
+                              subtitle: Text(entry.link.toString()),
                               trailing: Icon(Icons.keyboard_arrow_right),
-                              onTap: () {
-                                print("test");
+                              onTap:() async {
+                                print("opendownloadlink");
+                                const url = "https://firebasestorage.googleapis.com/v0/b/s23d-andweb-th.appspot.com/o/61090033%2Fpond_kindergarten_transcript.pdf?alt=media&token=a164f29c-6df5-4e7b-bf87-17dc9a1ff56f";
+                                if (await canLaunch(url))
+                                await launch(url);
+                                else
+                                // can't launch url, there is some error
+                                throw "Could not launch $url";
                               },
                               // selected: false,
                             ),
@@ -119,7 +124,6 @@ class PageExampleLoadDataItemState extends State<PageExampleLoadDataItem> {
                           ?.toList() ??
                       [],
                 ),
-
               ],
             )),
       ),
