@@ -195,8 +195,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: Colors.blueAccent,
                         ),
                         title: new TextFormField(
-                            controller: _emailField,
-                            decoration: new InputDecoration(
+                          controller: _emailField,
+                          decoration: new InputDecoration(
                             labelText: "Enter Email",
                             fillColor: Colors.transparent,
                             border: new OutlineInputBorder(
@@ -325,15 +325,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 .get()
                 .then((QuerySnapshot querySnapshot) {
               querySnapshot.docs.forEach((doc) {
-                //print(doc["mfa"]);
                 mfa = doc["mfa"];
                 username = doc["name"];
               });
             });
-
-            Navigator.push( //// DECHI : Fix so that the state actually works
-              context,
-              MaterialPageRoute(builder: (context) => Authentication()),
+            Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Authentication()),
             );
             setState(() => ButtonState.success );
             break;

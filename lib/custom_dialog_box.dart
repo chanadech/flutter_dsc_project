@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'main.dart';
+
+firebase_storage.FirebaseStorage storage = firebase_storage.FirebaseStorage.instance;
 
 class CustomDialogBox extends StatelessWidget {
   final double _borderRadius = 20;
+  final TextEditingController _filenameField = TextEditingController();
+  String studentID;
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -61,6 +68,7 @@ class CustomDialogBox extends StatelessWidget {
                             ),
                           ),
                           TextField(
+                            controller: _filenameField,
                             decoration: InputDecoration(
                                 border:  OutlineInputBorder(),
                                 hintText: "e.g. High School"
@@ -75,8 +83,10 @@ class CustomDialogBox extends StatelessWidget {
                                   Text("Upload a File")
                                 ],
                               ),
-                              onPressed:(){
-
+                              onPressed:() async {
+                                //// DECHI
+                                studentID = user.email.substring(0,7);
+                                print(studentID);
                               })
                           // Expanded(
                           //   child: TextField(
